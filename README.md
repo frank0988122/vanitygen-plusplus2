@@ -165,10 +165,6 @@ Special thanks to the following projects:
 2. https://github.com/exploitagency/vanitygen-plus (now returns 404)
 3. https://github.com/kjx98/vanitygen-eth
 
-# Known Issues
-1. oclvanitygen++ (GPU version) cannot find vanity ETH addresses starting with 0x00.
-2. ETH vanity address difficulty estimation is **always** based on case-insensitive searching.
-
 # License
 GNU Affero General Public License
 

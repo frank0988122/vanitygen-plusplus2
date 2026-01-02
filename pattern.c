@@ -1771,16 +1771,18 @@ vg_prefix_ethaddr_sort(vg_context_t *vcp, void *buf)
 
 		/* Low */
 		nbytes = BN_bn2bin(vp->vp_low, bnbuf);
-		ncopy = ((nbytes >= 20) ? 20 : ((nbytes > 4) ? (nbytes - 4) : 0));
+		ncopy = (nbytes >= 20) ? 20 : nbytes;
 		memset(cbuf, 0, 20);
-		memcpy(cbuf + (20 - ncopy), bnbuf, ncopy);
+		if (ncopy > 0)
+			memcpy(cbuf + (20 - ncopy), bnbuf, ncopy);
 		cbuf += 20;
 
 		/* High */
 		nbytes = BN_bn2bin(vp->vp_high, bnbuf);
-		ncopy = ((nbytes >= 20) ? 20 : ((nbytes > 4) ? (nbytes - 4) : 0));
+		ncopy = (nbytes >= 20) ? 20 : nbytes;
 		memset(cbuf, 0, 20);
-		memcpy(cbuf + (20 - ncopy), bnbuf, ncopy);
+		if (ncopy > 0)
+			memcpy(cbuf + (20 - ncopy), bnbuf, ncopy);
 		cbuf += 20;
 	}
 	return npfx;
