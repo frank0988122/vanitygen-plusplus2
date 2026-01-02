@@ -13,6 +13,7 @@
 ## MacOS:
 # brew install openssl@3
 # brew install pcre
+# brew install check                # Only need if you want to run tests
 
 LIBS=-lpcre -lcrypto -lm -lpthread
 CFLAGS=-ggdb -O3 -Wall -Wno-deprecated
@@ -30,6 +31,8 @@ ifeq ($(PLATFORM),Darwin)
 	CFLAGS+=-I/opt/homebrew/opt/openssl/include
 	LIBS+=-L/opt/homebrew/opt/pcre/lib
 	CFLAGS+=-I/opt/homebrew/opt/pcre/include
+	LIBS+=-L/opt/homebrew/opt/check/lib
+	CFLAGS+=-I/opt/homebrew/opt/check/include
 else ifeq ($(PLATFORM),NetBSD)
 	LIBS+=`pcre-config --libs`
 	CFLAGS+=`pcre-config --cflags`
