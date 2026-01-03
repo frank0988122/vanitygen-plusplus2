@@ -1,12 +1,11 @@
-name: Auto Build Vanitygen-PlusPlus (Debug)
+name: Auto Build Vanitygen-PlusPlus (Debug v4)
 
-# 调试版触发：push commit、PR、tag 都触发
 on:
   push:
     branches:
       - '**'    # 所有分支
     tags:
-      - 'v*'
+      - 'v*'   # push tag 时触发 Release
   pull_request:
     branches:
       - '**'
@@ -70,9 +69,9 @@ jobs:
         shell: bash
 
       # ----------------------
-      # 上传 artifact（每次 commit 都可以下载）
+      # 上传 artifact
       - name: Upload artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: vanitygen-plusplus-${{ matrix.os }}
           path: vanitygen-plusplus-${VERSION}-${{ matrix.os }}.zip
@@ -84,7 +83,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Download artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           path: release_files
 
