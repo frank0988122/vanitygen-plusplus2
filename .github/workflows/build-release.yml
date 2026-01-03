@@ -1,11 +1,15 @@
-name: Auto Build Vanitygen-PlusPlus
+name: Auto Build Vanitygen-PlusPlus (Debug)
 
+# 调试版触发：push commit、PR、tag 都触发
 on:
   push:
     branches:
-      - main   # 每次 push main 分支都会触发
+      - '**'    # 所有分支
     tags:
-      - 'v*'   # push tag 时也会触发 Release
+      - 'v*'
+  pull_request:
+    branches:
+      - '**'
 
 jobs:
   build:
@@ -16,7 +20,7 @@ jobs:
         os: [ubuntu-latest, macos-latest, windows-latest]
 
     env:
-      # 版本号: tag 存在则用 tag，否则用 commit SHA
+      # 版本号：优先用 tag，否则用 commit SHA
       VERSION: ${{ github.ref_name != '' && github.ref_name || github.sha }}
 
     steps:
@@ -66,7 +70,7 @@ jobs:
         shell: bash
 
       # ----------------------
-      # 上传 artifact
+      # 上传 artifact（每次 commit 都可以下载）
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
