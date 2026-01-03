@@ -1,0 +1,76 @@
+name: Build & Release Vanitygen-PlusPlus Multi-Platform
+
+on:
+  push:
+    tags:
+      - 'v*'    # 仅当 push tag vX.X.X 时触发 release
+
+jobs:
+  build:
+    name: Build on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up dependencies
+        run: |
+          if [[ "${{ matrix.os }}" == "ubuntu-latest" ]]; then
+            sudo apt-get update
+            sudo apt-get install -y build-essential cmake git ocl-icd-opencl-dev zip
+          elif [[ "${{ matrix.os }}" == "macos-latest" ]]; then
+            brew update
+            brew install cmake zip
+          elif [[ "${{ matrix.os }}" == "windows-latest" ]]; then
+            choco install cmake zip -y
+          fi
+        shell: bash
+
+      - name: Build vanitygen-plusplus
+        run: |
+          make clean
+          make all
+        shell: bash
+
+      - name: Prepare artifacts
+        run: |
+          mkdir -p release-${{ matrix.os }}
+          cp vanitygen++ release-${{ matrix.os }}/
+          cp oclvanitygen++ release-${{ matrix.os }}/
+          cp keyconv release-${{ matrix.os }}/
+          zip -r vanitygen-plusplus-${{ matrix.os }}.zip release-${{ matrix.os }}
+        shell: bash
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: vanitygen-plusplus-${{ matrix.os }}
+          path: vanitygen-plusplus-${{ matrix.os }}.zip
+
+  release:
+    name: Create GitHub Release
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v3
+        with:
+          path: release_files
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ github.ref_name }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload release assets
+        uses: softprops/action-gh-release@v1
+        with:
+          files: release_files/**/*.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
